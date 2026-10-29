@@ -52,11 +52,12 @@ BRANCHES = {
 }
 BASE = BRANCHES["District 5"]  # used for the --test link
 # Likely URLs for the film's page, tried directly in case it isn't linked yet.
-GUESSED_SLUGS = ["avengers-doomsday", "avengers-dooms-day", "avengers-5-doomsday"]
+GUESSED_SLUGS = ["avengers-doomsday-infinity-vision-sx-4dx", "avengers-doomsday"]
 
 KEYWORD = re.compile(r"dooms\s*-?\s*day", re.I)
 MOVIE_LINK = re.compile(r"/movie-details/([A-Za-z0-9_\-]+)\.html")
 SHOWTIME_LINK = re.compile(r"/showtime-([0-9a-fA-F]{16,40})")
+DAY = re.compile(r"\b(\d{2}-\d{2}-20\d{2})\b")   # date tabs like 17-12-2026
 
 STATE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".doomsday_state.json")
 USER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -175,11 +176,26 @@ def check(base):
             continue
         listed = True
         movie_url = url
-        ids = sorted(set(SHOWTIME_LINK.findall(html)))
+        ids = sorted(showtimes_on_page(url, html))
         if ids:
             showtimes = [f"{base}/showtime-{i}" for i in ids]
             break
     return {"listed": listed, "movie_url": movie_url, "showtimes": showtimes}
+
+
+def showtimes_on_page(url, html):
+    """Showtime IDs on a movie page. The site loads each day's times separately
+    (movie page ?business_day=DD-MM-YYYY&ajax=1), so ask for every date tab."""
+    ids = set(SHOWTIME_LINK.findall(html))
+    for day in list(dict.fromkeys(DAY.findall(html)))[:14]:
+        try:
+            _, part = fetch(f"{url}?business_day={day}&ajax=1")
+        except Exception as e:
+            log(f"  (couldn't load times for {day}: {e})")
+            continue
+        if part:
+            ids.update(SHOWTIME_LINK.findall(part))
+    return ids
 
 
 def run_once_branch(name, base, state):
