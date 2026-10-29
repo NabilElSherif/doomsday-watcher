@@ -18,7 +18,7 @@ Usage:
   python3 doomsday_watch.py               # run forever
   python3 doomsday_watch.py --test        # send a test notification and exit
   python3 doomsday_watch.py --once        # do a single check and print the result
-  python3 doomsday_watch.py --ci          # one check + saved state (used by GitHub Actions)
+  python3 doomsday_watch.py --ci          # GitHub Actions mode: checks every minute for ~20 min
 """
 
 import json
@@ -225,20 +225,29 @@ def main():
         alert("Doomsday watcher test", "If you see this, notifications work.", BASE)
         return
     if "--ci" in args:
-        # GitHub Actions: one check per run; state is saved to the repo between runs.
+        # GitHub Actions: each run keeps checking about once a minute for ~20 minutes,
+        # then the next scheduled run takes over. State is saved to the repo between runs.
         if not NTFY_TOPIC:
             log("WARNING: NTFY_TOPIC secret is not set - you won't get phone alerts!")
+        run_minutes = float(os.environ.get("CI_RUN_MINUTES", "20"))
+        every = float(os.environ.get("CI_CHECK_SECONDS", "60"))
+        deadline = time.time() + run_minutes * 60
         state = load_state()
-        try:
-            run_once(state)
-            state["failures"] = 0
-        except Exception as e:
-            state["failures"] = state.get("failures", 0) + 1
-            log(f"check failed ({state['failures']} in a row): {e}")
-            if state["failures"] == 6:  # about 30 minutes of failures
-                alert("Doomsday watcher can't reach the site",
-                      "6 failed checks in a row on GitHub. Open the Actions tab to see why.")
-        save_state(state)
+        while True:
+            try:
+                run_once(state)
+                state["failures"] = 0
+            except Exception as e:
+                state["failures"] = state.get("failures", 0) + 1
+                log(f"check failed ({state['failures']} in a row): {e}")
+                if state["failures"] == 15:  # about 15 minutes of failures
+                    alert("Doomsday watcher can't reach the site",
+                          "No successful check for about 15 minutes. Open the Actions tab to see why.")
+            save_state(state)
+            wait = max(10.0, every + random.uniform(-10, 10))
+            if time.time() + wait > deadline:
+                break
+            time.sleep(wait)
         return
     if "--once" in args:
         for name, base in BRANCHES.items():
