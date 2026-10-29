@@ -1,0 +1,41 @@
+name: Doomsday ticket watch
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # every 5 minutes (GitHub may delay runs a little)
+  workflow_dispatch:         # lets you run it by hand from the Actions tab
+    inputs:
+      test:
+        description: "Only send a test notification to my phone"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write            # so it can save what it has already alerted about
+
+concurrency:
+  group: doomsday-watch
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Scene District 5
+        run: python3 doomsday_watch.py ${{ inputs.test && '--test' || '--ci' }}
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+
+      - name: Save state
+        if: always()
+        run: |
+          if [ -n "$(git status --porcelain .doomsday_state.json)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .doomsday_state.json
+            git commit -m "Update watcher state"
+            git push || echo "Could not save state this time"
+          fi
