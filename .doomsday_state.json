@@ -1,7 +1,36 @@
 {
   "District 5": {
-    "listed": false,
-    "showtimes": []
+    "listed": true,
+    "showtimes": [
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33ce",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33cf",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33d0",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33d1",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33d2",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33d3",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33d4",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33d5",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33d6",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33d7",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33d8",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33d9",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33da",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33db",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33dc",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33dd",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33de",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33df",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33e0",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33e1",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33e2",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33e3",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33e4",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33e5",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33e6",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33e7",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33e8",
+      "https://district5.scenecinemas.com/showtime-6ae36d14e95f9a06741a33e9"
+    ]
   },
   "failures": 0
 }
