@@ -2,7 +2,7 @@ name: Doomsday ticket watch
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   # start a run every 5 min; each run checks every minute for ~20 min
+    - cron: "*/5 * * * *"   # backup starter; each run checks every minute for ~20 min, then starts the next
   workflow_dispatch:         # lets you run it by hand from the Actions tab
     inputs:
       test:
@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write            # so it can save what it has already alerted about
+  actions: write             # so each run can start the next one
 
 concurrency:              # one run at a time; the next one waits its turn
   group: doomsday-watch      # (extra waiting runs show as "cancelled" - that's normal)
@@ -41,3 +42,9 @@ jobs:
             git commit -m "Update watcher state"
             git push || echo "Could not save state this time"
           fi
+
+      - name: Start the next run (keeps checks going non-stop)
+        if: ${{ !cancelled() && !inputs.test }}
+        run: gh workflow run watch.yml --repo "$GITHUB_REPOSITORY" --ref main || echo "Could not start next run; the schedule will pick it up"
+        env:
+          GH_TOKEN: ${{ github.token }}
