@@ -21,8 +21,10 @@ jobs:
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      TZ: Africa/Cairo       # show log times in Cairo time
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Check Scene District 5
         run: python3 doomsday_watch.py ${{ inputs.test && '--test' || '--ci' }}
