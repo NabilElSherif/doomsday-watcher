@@ -2,7 +2,7 @@ name: Doomsday ticket watch
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   # every 5 minutes (GitHub may delay runs a little)
+    - cron: "*/5 * * * *"   # start a run every 5 min; each run checks every minute for ~20 min
   workflow_dispatch:         # lets you run it by hand from the Actions tab
     inputs:
       test:
@@ -13,14 +13,14 @@ on:
 permissions:
   contents: write            # so it can save what it has already alerted about
 
-concurrency:
-  group: doomsday-watch
+concurrency:              # one run at a time; the next one waits its turn
+  group: doomsday-watch      # (extra waiting runs show as "cancelled" - that's normal)
   cancel-in-progress: false
 
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 30
     env:
       TZ: Africa/Cairo       # show log times in Cairo time
     steps:
